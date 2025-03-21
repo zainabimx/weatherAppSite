@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weather App</title>
+    <style>
+        /* General Page Styles */
+        body {
+            font-family: 'Poppins', sans-serif;
+            text-align: center;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Weather Container */
+        #weather-container {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+            display: none;
+            margin-top: 20px;
+            width: 300px;
+        }
+
+        /* Input and Button */
+        input {
+            padding: 12px;
+            border: none;
+            border-radius: 20px;
+            outline: none;
+            width: 250px;
+            font-size: 16px;
+            background: white;
+            color: #333;
+            text-align: center;
+            box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        button {
+            padding: 12px 20px;
+            border: none;
+            border-radius: 20px;
+            background: #ff9a9e;
+            background: linear-gradient(to right, #ff9a9e, #fad0c4);
+            color: white;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s ease;
+            box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        button:hover {
+            background: linear-gradient(to right, #fad0c4, #ff9a9e);
+            transform: scale(1.05);
+        }
+
+        /* Weather Info Styling */
+        #weather-container h2 {
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+
+        #temperature {
+            font-size: 20px;
+            font-weight: bold;
+            margin: 5px 0;
+        }
+
+        #weather-description {
+            font-size: 18px;
+            font-style: italic;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Weather App</h1>
+    <input type="text" id="city" placeholder="Enter city name">
+    <button onclick="fetchWeather()">Get Weather</button>
+
+    <div id="weather-container">
+        <h2 id="city-name"></h2>
+        <p id="temperature"></p>
+        <p id="weather-description"></p>
+    </div>
+
+    <script>
+        function fetchWeather() {
+            const city = document.getElementById('city').value;
+            if (!city) {
+                alert("Please enter a city name");
+                return;
+            }
+
+            fetch(`http://localhost:8080/api/weather/${city}`, {
+                method: "GET",
+                headers: {
+                    "Accept": "application/json",
+                    "Content-Type": "application/json"
+                }
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log("Weather Data:", data);
+                document.getElementById('city-name').innerText = `🌍 City: ${data.name}`;
+                document.getElementById('temperature').innerText = `🌡️ Temperature: ${data.main.temp}°C`;
+                document.getElementById('weather-description').innerText = `🌤️ Weather: ${data.weather[0].description}`;
+                document.getElementById('weather-container').style.display = 'block';
+            })
+            .catch(error => {
+                console.error("Fetch error:", error);
+                alert("Failed to fetch weather data");
+            });
+        }
+    </script>
+
+</body>
+</html>
